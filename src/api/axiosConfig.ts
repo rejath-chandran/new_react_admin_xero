@@ -1,24 +1,31 @@
 import axios from "axios";
 
-const axiosInstance = axios.create();
+const api = axios.create({
+  baseURL: "https://api.xerolok.com/api",
+  withCredentials: true,
+});
 
-axiosInstance.interceptors.response.use(
+api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
+    console.log("Error- normal", error);
 
+    if (
+      error.response.status === 401 &&
+      !originalRequest._retry &&
+      error.response.data.code === "token_not_valid"
+    ) {
+      originalRequest._retry = true;
       try {
-        const refreshResponse = await axios.post("/api/refresh");
+        const refreshResponse = await api.post("/refresh/");
         if (refreshResponse.status === 200) {
-          // Assuming the new access token is set in the cookie by the server
-          return axiosInstance(originalRequest);
+          return api(originalRequest);
         }
       } catch (refreshError) {
-        // Refresh token is invalid, redirect to login
         window.location.href = "/login";
+        console.log("Refresh token is invalid, redirecting to login");
         return Promise.reject(refreshError);
       }
     }
@@ -27,4 +34,4 @@ axiosInstance.interceptors.response.use(
   },
 );
 
-export default axiosInstance;
+export default api;
