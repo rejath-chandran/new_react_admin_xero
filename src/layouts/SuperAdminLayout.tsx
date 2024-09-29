@@ -1,17 +1,13 @@
 import React from "react";
 import { Outlet, Navigate } from "react-router-dom";
-
+import { Sidebar } from "../components/SideBar";
 const SuperAdminLayout: React.FC = () => {
-  const userRole = localStorage.getItem("userRole");
-
-  if (userRole !== "superadmin") {
-    return <Navigate to="/dashboard" />;
-  }
-
   return (
-    <div>
-      <h1>Super Admin Dashboard</h1>
-      <Outlet />
+    <div className="flex bg-indigo-50">
+      <Sidebar />
+      <div className="h-[100vh] w-full overflow-hidden scrollbar-hide">
+        <Outlet />
+      </div>
     </div>
   );
 };

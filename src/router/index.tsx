@@ -1,44 +1,71 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import Login from "../components/Login";
-import MainLayout from "../layouts/MainLayout";
-import SuperAdminLayout from "../layouts/SuperAdminLayout";
-import Dashboard from "../components/Dashboard";
-import SuperAdminDashboard from "../components/SuperAdminDashboard";
-import { Example } from "../components/SideBar";
 import ProtectedRoutes from "../components/ProtectedRoutes";
-
+import SuperAdminLayout from "../layouts/SuperAdminLayout";
+import StaffDashboard from "../components/StaffDashboard";
+import { Staff, Attack, Service } from "../pages/superadmin";
+import { Dashboard } from "../pages/staff";
+import ChangePass from "../pages/superadmin/ChangePaas";
 const router = createBrowserRouter([
   {
-    path: "/example",
+    path: "/",
+    element: <Navigate to="/login" />,
+  },
+  {
+    path: "/user",
     element: (
-      <ProtectedRoutes allowedRoles={["superadmin"]}>
-        <Example />
+      <ProtectedRoutes allowedRoles={["staff"]}>
+        <StaffDashboard />
       </ProtectedRoutes>
     ),
-  },
-  {
-    path: "/login",
-    element: <Login />,
-  },
-  {
-    path: "/",
-    element: <MainLayout />,
     children: [
+      {
+        path: "",
+        element: <Navigate to="/user/dashboard" />,
+      },
       {
         path: "dashboard",
         element: <Dashboard />,
       },
+    ],
+  },
+  {
+    path: "/admin",
+    element: (
+      <ProtectedRoutes allowedRoles={["superadmin"]}>
+        <SuperAdminLayout />
+      </ProtectedRoutes>
+    ),
+    children: [
       {
-        path: "superadmin",
-        element: <SuperAdminLayout />,
-        children: [
-          {
-            path: "dashboard",
-            element: <SuperAdminDashboard />,
-          },
-        ],
+        path: "",
+        element: <Navigate to="/admin/services" />,
+      },
+      {
+        path: "services",
+        element: <Service />,
+      },
+      {
+        path: "staff",
+        element: <Staff />,
+      },
+      {
+        path: "attacks",
+        element: <Attack />,
+      },
+      {
+        path: "projects",
+        element: <>not completed</>,
+      },
+      {
+        path: "changepassword",
+        element: <ChangePass/>,
       },
     ],
+  },
+  {
+    path: "/login",
+    element: <Login />,
   },
 ]);
 

@@ -69,7 +69,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import DialogDemo from "./AddModal";
+// import DialogDemo from "./AddModal";
 import { useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
@@ -102,7 +102,11 @@ interface Service {
   description: string;
 }
 import { useAuth } from "./AuthProvider";
+
+
+
 export function Dashboard() {
+
   const { handleLogout } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");

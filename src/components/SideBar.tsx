@@ -9,9 +9,12 @@ import {
   FiShoppingCart,
   FiTag,
   FiUsers,
+  FiTarget,
+  FiUser,
 } from "react-icons/fi";
 import { motion } from "framer-motion";
 import { Dashboard } from "./MainContent";
+import { Link, useNavigate, useLocation, useMatch } from "react-router-dom";
 export const Example = () => {
   return (
     <div className="flex bg-indigo-50">
@@ -21,9 +24,14 @@ export const Example = () => {
   );
 };
 
-const Sidebar = () => {
+export const Sidebar = () => {
   const [open, setOpen] = useState(true);
-  const [selected, setSelected] = useState("Dashboard");
+  const [selected, setSelected] = useState("Services");
+
+  //   const navigate = useNavigate();
+  const location = useLocation();
+  const match = useMatch(location.pathname);
+  const isActive = match !== null;
 
   return (
     <motion.nav
@@ -38,59 +46,39 @@ const Sidebar = () => {
       <div className="space-y-1">
         <Option
           Icon={FiHome}
-          title="Dashboard"
+          title="Services"
           notifs={""} // Add this line
           selected={selected}
           setSelected={setSelected}
           open={open}
+          //   isActive={isActive}
         />
         <Option
-          Icon={FiDollarSign}
-          title="Sales"
+          Icon={FiUser}
+          title="Staff"
           selected={selected}
           setSelected={setSelected}
           open={open}
-          notifs={3}
+          notifs={""}
+          //   isActive={isActive}
         />
         <Option
           notifs={""} // Add this line
           Icon={FiMonitor}
-          title="View Site"
+          title="Attacks"
           selected={selected}
           setSelected={setSelected}
           open={open}
+          //   isActive={isActive}
         />
         <Option
           notifs={""} // Add this line
-          Icon={FiShoppingCart}
-          title="Products"
+          Icon={FiTarget}
+          title="Projects"
           selected={selected}
           setSelected={setSelected}
           open={open}
-        />
-        <Option
-          notifs={""} // Add this line
-          Icon={FiTag}
-          title="Tags"
-          selected={selected}
-          setSelected={setSelected}
-          open={open}
-        />
-        <Option
-          notifs={""} // Add this line
-          Icon={FiBarChart}
-          title="Analytics"
-          selected={selected}
-          setSelected={setSelected}
-          open={open}
-        />
-        <Option
-          notifs={""} // Add this line
-          Icon={FiUsers}
-          title="Members"
-          selected={selected}
-          setSelected={setSelected}
-          open={open}
+          //   isActive={isActive}
         />
       </div>
 
@@ -98,6 +86,8 @@ const Sidebar = () => {
     </motion.nav>
   );
 };
+
+import { NavLink } from "react-router-dom";
 
 const Option = ({
   Icon,
@@ -115,44 +105,56 @@ const Option = ({
   notifs: number | string;
 }) => {
   return (
-    <motion.button
-      layout
-      onClick={() => setSelected(title)}
-      className={`relative flex h-10 w-full items-center rounded-md transition-colors ${selected === title ? "bg-primary text-white" : "text-slate-500 hover:bg-slate-100"}`}
+    <NavLink
+      to={`/admin/${title.toLowerCase()}`}
+      className={({ isActive }) => `
+        ${isActive ? "bg-primary text-white" : "text-slate-500 hover:bg-slate-100"}
+        relative flex h-10 w-full items-center rounded-md transition-colors
+      `}
     >
-      <motion.div
-        layout
-        className="grid h-full w-10 place-content-center text-lg"
-      >
-        <Icon />
-      </motion.div>
-      {open && (
-        <motion.span
+      {({ isActive }) => (
+        <motion.button
           layout
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.125 }}
-          className="text-xs font-medium"
-        >
-          {title}
-        </motion.span>
-      )}
-
-      {notifs && open && (
-        <motion.span
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{
-            opacity: 1,
-            scale: 1,
+          onClick={() => {
+            setSelected(title);
           }}
-          style={{ y: "-50%" }}
-          transition={{ delay: 0.5 }}
-          className="absolute right-2 top-1/2 size-4 rounded bg-primary text-xs text-white"
+          className="w-full h-full flex items-center"
         >
-          {notifs}
-        </motion.span>
+          <motion.div
+            layout
+            className="grid h-full w-10 place-content-center text-lg"
+          >
+            <Icon />
+          </motion.div>
+          {open && (
+            <motion.span
+              layout
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.125 }}
+              className="text-xs font-medium"
+            >
+              {title}
+            </motion.span>
+          )}
+
+          {notifs && open && (
+            <motion.span
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+              }}
+              style={{ y: "-50%" }}
+              transition={{ delay: 0.5 }}
+              className="absolute right-2 top-1/2 size-4 rounded bg-primary text-xs text-white"
+            >
+              {notifs}
+            </motion.span>
+          )}
+        </motion.button>
       )}
-    </motion.button>
+    </NavLink>
   );
 };
 
@@ -181,7 +183,6 @@ const TitleSection = ({ open }: { open: boolean }) => {
 };
 
 const Logo = () => {
-  // Temp logo from https://logoipsum.com/
   return (
     <motion.div
       layout

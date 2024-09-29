@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthProvider";
 import { Button } from "./ui/button";
 import toast, { Toaster } from "react-hot-toast";
@@ -17,9 +17,16 @@ const Login: React.FC = () => {
     e.preventDefault();
 
     try {
-      await handleLogin(username, password);
+      let role: any = await handleLogin(username, password);
       setLoading(false);
-      navigate("/example");
+
+      if (role === "superadmin") {
+        console.log("superadmin", role);
+        navigate("/admin/services");
+      } else if (role === "staff") {
+        console.log("staff", role);
+        navigate("/user");
+      }
     } catch (error: any) {
       setLoading(false);
       toast.error(error.error, {
@@ -32,7 +39,17 @@ const Login: React.FC = () => {
       });
     }
   };
+  let role = localStorage.getItem("auth");
 
+  if (role) {
+    if (role === "superadmin") {
+      //   navigate("/admin/services");
+      return <Navigate to="/admin/services" />;
+    } else if (role === "staff") {
+      //   navigate("/user");
+      return <Navigate to="/user" />;
+    }
+  }
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 to-black p-4">
       <Toaster />
@@ -106,10 +123,7 @@ const Login: React.FC = () => {
         <div className="px-8 py-4 bg-blue-200 dark:bg-zinc-800">
           <div className="text-sm text-blue-900 dark:text-blue-300 text-center">
             Forgot your password?
-            <Link
-              to={"/reset-password"}
-              className="font-medium underline"
-            >
+            <Link to={"/reset-password"} className="font-medium underline">
               reset password
             </Link>
           </div>
